@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antigravity - Feature Showcase & Zero-G Lab</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Custom subtle scrollbars and pulse animations */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(140, 140, 160, 0.25); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(140, 140, 160, 0.45); }
+    
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(1deg); }
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    @keyframes scanline {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(1000%); }
+    }
+    .animate-float { animation: floatSlow 4s ease-in-out infinite; }
+    .animate-glow { animation: pulseGlow 3s ease-in-out infinite; }
+    .glass-panel {
+      background: rgba(var(--card-rgb, 30, 35, 45), 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="bg-[var(--background,#0b0f17)] text-[var(--foreground,#f0f4fc)] min-h-screen antialiased selection:bg-[var(--primary,#4f46e5)] selection:text-white">
+
+  <!-- TOP NAVIGATION HEADER -->
+  <header class="sticky top-0 z-50 border-b border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)]/80 backdrop-blur-md px-6 py-3.5 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 p-0.5 shadow-lg shadow-indigo-500/20 flex items-center justify-center">
+        <div class="w-full h-full bg-[var(--background,#0b0f17)] rounded-[10px] flex items-center justify-center">
+          <svg class="w-5 h-5 text-cyan-400 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-base tracking-wide bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">ANTIGRAVITY</span>
+          <span class="text-xs px-2 py-0.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 font-mono">v2.5 DeepMind Engine</span>
+        </div>
+        <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Advanced Agentic Coding Environment & Physics Lab</p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="flex items-center bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] p-1 rounded-xl gap-1 text-sm">
+      <button onclick="switchTab('orchestrator')" id="tab-btn-orchestrator" class="tab-btn px-4 py-1.5 rounded-lg font-medium transition-all flex items-center gap-2 bg-[var(--primary,#6366f1)] text-white shadow">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+        Agent Engine
+      </button>
+      <button onclick="switchTab('physics')" id="tab-btn-physics" class="tab-btn px-4 py-1.5 rounded-lg font-medium transition-all flex items-center gap-2 text-[var(--muted-foreground,#94a3b8)] hover:text-[var(--foreground,#f0f4fc)]">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+        Zero-G Lab
+      </button>
+      <button onclick="switchTab('capabilities')" id="tab-btn-capabilities" class="tab-btn px-4 py-1.5 rounded-lg font-medium transition-all flex items-center gap-2 text-[var(--muted-foreground,#94a3b8)] hover:text-[var(--foreground,#f0f4fc)]">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+        Feature Matrix
+      </button>
+      <button onclick="switchTab('terminal')" id="tab-btn-terminal" class="tab-btn px-4 py-1.5 rounded-lg font-medium transition-all flex items-center gap-2 text-[var(--muted-foreground,#94a3b8)] hover:text-[var(--foreground,#f0f4fc)]">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Sandbox Terminal
+      </button>
+    </div>
+
+    <!-- Quick Audio & Status -->
+    <div class="flex items-center gap-3">
+      <button id="sound-btn" onclick="toggleAudio()" class="p-2 rounded-lg border border-[var(--border,#262f3f)] hover:bg-[var(--card,#151b28)] text-[var(--muted-foreground,#94a3b8)] hover:text-cyan-400 transition" title="Toggle Synthesized Sci-Fi FX">
+        <svg id="sound-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+      </button>
+      <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+        SANDBOX ONLINE
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main class="max-w-7xl mx-auto p-6 space-y-6">
+
+    <!-- ========================================== -->
+    <!-- TAB 1: AGENT ENGINE & COGNITIVE WORKFLOW  -->
+    <!-- ========================================== -->
+    <section id="view-orchestrator" class="space-y-6">
+      
+      <!-- HERO BANNER -->
+      <div class="relative overflow-hidden rounded-2xl border border-[var(--border,#262f3f)] bg-gradient-to-br from-[var(--card,#151b28)] via-[var(--background,#0b0f17)] to-[var(--card,#151b28)] p-8 shadow-xl">
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-3 max-w-2xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 text-xs font-medium">
+              <span>⚡ Google DeepMind Architecture</span>
+              <span class="text-indigo-400">•</span>
+              <span>Reactive Wakeup & Tool Virtualization</span>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-[var(--foreground,#f0f4fc)]">
+              Antigravity <span class="bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">Agentic Engine</span>
+            </h1>
+            <p class="text-[var(--muted-foreground,#94a3b8)] text-sm sm:text-base leading-relaxed">
+              Experience the core mechanics of Antigravity: self-directed tool execution, concurrent subagent swarms, sandboxed Debian OS interaction, dynamic skills, and zero-polling reactive wakeup.
+            </p>
+          </div>
+
+          <!-- Quick Action / Interactive trigger -->
+          <div class="flex flex-col sm:flex-row items-stretch md:items-center gap-3">
+            <button onclick="startSimulation('refactor')" class="px-5 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 transition-all flex items-center justify-center gap-2 group">
+              <svg class="w-4 h-4 transition-transform group-hover:scale-125" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Simulate Live Pipeline
+            </button>
+            <button onclick="resetSimulation()" class="px-4 py-3 rounded-xl border border-[var(--border,#262f3f)] hover:bg-[var(--card,#151b28)] text-[var(--muted-foreground,#94a3b8)] hover:text-white font-medium text-sm transition">
+              Reset Flow
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENT COGNITIVE PIPELINE VISUALIZER -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left 7 cols: Interactive Pipeline Graph -->
+        <div class="lg:col-span-7 bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-bold text-[var(--foreground,#f0f4fc)] flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                Cognitive State & Multi-Agent Swarm
+              </h2>
+              <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Live representation of planner loop & tool dispatch</p>
+            </div>
+            <!-- Preset selector -->
+            <select id="pipeline-scenario-select" onchange="loadPresetScenario(this.value)" class="bg-[var(--background,#0b0f17)] border border-[var(--border,#262f3f)] text-xs rounded-lg px-3 py-1.5 text-[var(--foreground,#f0f4fc)] focus:outline-none focus:border-cyan-400">
+              <option value="refactor">Mission 1: Async Auth & Microservice Refactor</option>
+              <option value="teamwork">Mission 2: Multi-Agent Swarm (/teamwork)</option>
+              <option value="genui">Mission 3: Generative UI & Sandbox Artifact</option>
+              <option value="debugger">Mission 4: Linux Core Dump & CI Debugger</option>
+            </select>
+          </div>
+
+          <!-- Flow steps visual nodes -->
+          <div class="space-y-4">
+            
+            <!-- Step 1: User Request & Intent Parsing -->
+            <div id="node-step-1" class="pipeline-node p-4 rounded-xl border border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)] transition-all duration-300">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="node-icon w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 flex items-center justify-center font-mono text-xs font-bold">01</div>
+                  <div>
+                    <h3 class="text-sm font-semibold text-[var(--foreground,#f0f4fc)]">Intent Parsing & Context Integration</h3>
+                    <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Transcripts, system prompts, active workspace files & plugins</p>
+                  </div>
+                </div>
+                <span class="node-badge text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">IDLE</span>
+              </div>
+              <div class="node-detail mt-3 text-xs text-slate-400 font-mono bg-black/30 p-2.5 rounded border border-white/5 hidden">
+                > Analyzing repo structure at /home/antigravity ... Found git workspace, Node 24 toolchain, Debian 12 environment.
+              </div>
+            </div>
+
+            <!-- Step 2: Planning & Thinking Loop -->
+            <div id="node-step-2" class="pipeline-node p-4 rounded-xl border border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)] transition-all duration-300">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="node-icon w-8 h-8 rounded-lg bg-purple-500/10 border border-purple-500/30 text-purple-400 flex items-center justify-center font-mono text-xs font-bold">02</div>
+                  <div>
+                    <h3 class="text-sm font-semibold text-[var(--foreground,#f0f4fc)]">Deep Chain-of-Thought & Skill Resolution</h3>
+                    <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Synthesizes plan, selects skills (web-app-dev, generative_ui, github)</p>
+                  </div>
+                </div>
+                <span class="node-badge text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">IDLE</span>
+              </div>
+              <div class="node-detail mt-3 text-xs text-slate-400 font-mono bg-black/30 p-2.5 rounded border border-white/5 hidden">
+                > &lt;thought&gt; Formulating execution graph: 1) Run static analysis, 2) Dispatch research subagent, 3) Write regression tests.
+              </div>
+            </div>
+
+            <!-- Step 3: Subagent Dispatch & Concurrency -->
+            <div id="node-step-3" class="pipeline-node p-4 rounded-xl border border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)] transition-all duration-300">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="node-icon w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 flex items-center justify-center font-mono text-xs font-bold">03</div>
+                  <div>
+                    <h3 class="text-sm font-semibold text-[var(--foreground,#f0f4fc)]">Autonomous Subagent Swarm (Teamwork)</h3>
+                    <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Invokes subagents: research, self, teamwork, or custom subagents</p>
+                  </div>
+                </div>
+                <span class="node-badge text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">IDLE</span>
+              </div>
+              <div class="node-detail mt-3 text-xs text-slate-400 font-mono bg-black/30 p-2.5 rounded border border-white/5 hidden">
+                > invoke_subagent(TypeName="research", Role="Codebase Researcher", Prompt="Map dependency tree of auth microservice")
+              </div>
+            </div>
+
+            <!-- Step 4: Sandboxed Linux VM Execution -->
+            <div id="node-step-4" class="pipeline-node p-4 rounded-xl border border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)] transition-all duration-300">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="node-icon w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center font-mono text-xs font-bold">04</div>
+                  <div>
+                    <h3 class="text-sm font-semibold text-[var(--foreground,#f0f4fc)]">Debian VM & Tool Bus Execution</h3>
+                    <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Runs non-root bash commands, uv, python, node, edits code with surgical diffs</p>
+                  </div>
+                </div>
+                <span class="node-badge text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">IDLE</span>
+              </div>
+              <div class="node-detail mt-3 text-xs text-slate-400 font-mono bg-black/30 p-2.5 rounded border border-white/5 hidden">
+                > run_command("uv run pytest tests/ -v") -> 18 passed, 0 failed. replace_file_content(...) applied.
+              </div>
+            </div>
+
+            <!-- Step 5: Generative UI & Reactive Delivery -->
+            <div id="node-step-5" class="pipeline-node p-4 rounded-xl border border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)] transition-all duration-300">
+              <div class="flex items-start justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="node-icon w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center font-mono text-xs font-bold">05</div>
+                  <div>
+                    <h3 class="text-sm font-semibold text-[var(--foreground,#f0f4fc)]">Generative UI & Deliverables</h3>
+                    <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Live interactive HTML artifacts, diff carousels & instant embed widgets</p>
+                  </div>
+                </div>
+                <span class="node-badge text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">IDLE</span>
+              </div>
+              <div class="node-detail mt-3 text-xs text-slate-400 font-mono bg-black/30 p-2.5 rounded border border-white/5 hidden">
+                > Generated &lt;agent-embed&gt; widget & standalone HTML artifact with Tailwind styling and zero CSP violations.
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom status bar -->
+          <div class="flex items-center justify-between text-xs text-[var(--muted-foreground,#94a3b8)] pt-4 border-t border-[var(--border,#262f3f)]">
+            <span id="pipeline-status-text">Ready to run. Click "Simulate Live Pipeline" above.</span>
+            <div class="flex items-center gap-2">
+              <span>Simulation Speed:</span>
+              <button onclick="setSpeed(1)" class="speed-btn px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-mono text-xs">1x</button>
+              <button onclick="setSpeed(2)" class="speed-btn px-2 py-0.5 rounded hover:bg-slate-800 font-mono text-xs">2x</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 cols: Live Streamed Agent Console & Reactive Wakeup Monitor -->
+        <div class="lg:col-span-5 bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] rounded-2xl p-6 shadow-sm flex flex-col justify-between space-y-4">
+          <div class="flex items-center justify-between border-b border-[var(--border,#262f3f)] pb-3">
+            <div class="flex items-center gap-2">
+              <div class="flex space-x-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-red-500/80"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-500/80"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500/80"></span>
+              </div>
+              <span class="text-xs font-mono text-[var(--muted-foreground,#94a3b8)]">antigravity.internal.log</span>
+            </div>
+            <span class="text-[11px] font-mono text-cyan-400 px-2 py-0.5 rounded bg-cyan-950/60 border border-cyan-800/40">REACTIVE WAKEUP</span>
+          </div>
+
+          <!-- Console Terminal Output -->
+          <div id="sim-console" class="bg-black/60 border border-[var(--border,#262f3f)] rounded-xl p-4 font-mono text-xs text-slate-300 h-80 overflow-y-auto space-y-2 leading-relaxed">
+            <div class="text-cyan-400">[SYSTEM] Antigravity runtime initialized.</div>
+            <div class="text-slate-500">[INFO] Host VM: Debian GNU/Linux 12 (bookworm) x86_64</div>
+            <div class="text-slate-500">[INFO] Connected Plugins: github, gdocs, gcalendar, gsheets, gslides, gdrive</div>
+            <div class="text-slate-500">[INFO] Toolchain: Node v24 LTS, uv 0.4+, Python 3.11, gh 2.60</div>
+            <div class="text-emerald-400">[READY] Waiting for user request or workflow trigger...</div>
+          </div>
+
+          <!-- Real-time metrics counters -->
+          <div class="grid grid-cols-3 gap-3 pt-2">
+            <div class="bg-[var(--background,#0b0f17)] p-3 rounded-xl border border-[var(--border,#262f3f)] text-center">
+              <div class="text-[11px] text-[var(--muted-foreground,#94a3b8)]">Subagents</div>
+              <div id="metric-subagents" class="text-lg font-bold font-mono text-cyan-400">0</div>
+            </div>
+            <div class="bg-[var(--background,#0b0f17)] p-3 rounded-xl border border-[var(--border,#262f3f)] text-center">
+              <div class="text-[11px] text-[var(--muted-foreground,#94a3b8)]">Active Tasks</div>
+              <div id="metric-tasks" class="text-lg font-bold font-mono text-purple-400">0</div>
+            </div>
+            <div class="bg-[var(--background,#0b0f17)] p-3 rounded-xl border border-[var(--border,#262f3f)] text-center">
+              <div class="text-[11px] text-[var(--muted-foreground,#94a3b8)]">Artifacts</div>
+              <div id="metric-artifacts" class="text-lg font-bold font-mono text-emerald-400">1</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: ZERO-G ANTI-GRAVITY PHYSICS LAB     -->
+    <!-- ========================================== -->
+    <section id="view-physics" class="hidden space-y-6">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] p-6 rounded-2xl">
+        <div>
+          <div class="flex items-center gap-2 text-cyan-400 text-xs font-mono mb-1">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            INTERACTIVE ZERO-G FORCE FIELD SIMULATOR
+          </div>
+          <h2 class="text-2xl font-bold text-[var(--foreground,#f0f4fc)]">Literal Anti-Gravity Physics Playground</h2>
+          <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Drag nodes, adjust gravity from -1.0g (levitation) to +1.0g, trigger shockwaves, and repel particles!</p>
+        </div>
+
+        <!-- Controls Toolbar -->
+        <div class="flex flex-wrap items-center gap-3">
+          <button onclick="setGravityMode('antigravity')" class="px-3.5 py-2 rounded-xl bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 text-xs font-semibold hover:bg-cyan-500/30 transition flex items-center gap-1.5">
+            <span>🚀 Invert Gravity (-0.6g)</span>
+          </button>
+          <button onclick="setGravityMode('zerog')" class="px-3.5 py-2 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300 text-xs font-semibold hover:bg-purple-500/30 transition flex items-center gap-1.5">
+            <span>🌌 Zero-G (0.0g)</span>
+          </button>
+          <button onclick="setGravityMode('vortex')" class="px-3.5 py-2 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-semibold hover:bg-indigo-500/30 transition flex items-center gap-1.5">
+            <span>🌀 Quantum Vortex</span>
+          </button>
+          <button onclick="triggerShockwave()" class="px-3.5 py-2 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-semibold hover:bg-rose-500/30 transition flex items-center gap-1.5">
+            <span>💥 Force Pulse</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Physics Canvas Container -->
+      <div class="relative w-full h-[520px] rounded-2xl border border-[var(--border,#262f3f)] overflow-hidden bg-gradient-to-b from-[#06080e] via-[#0b0f17] to-[#0e1422] shadow-2xl">
+        <canvas id="physics-canvas" class="w-full h-full block cursor-grab active:cursor-grabbing"></canvas>
+
+        <!-- Canvas HUD Overlay -->
+        <div class="absolute top-4 left-4 pointer-events-none space-y-1 bg-black/40 backdrop-blur-md p-3 rounded-xl border border-white/10 font-mono text-xs">
+          <div class="text-cyan-400 font-semibold flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+            GRAV-FIELD: <span id="hud-gravity">-0.45 G</span>
+          </div>
+          <div class="text-slate-400">PARTICLES: <span id="hud-particles">120</span></div>
+          <div class="text-slate-400">REPULSION: <span id="hud-repulsion">WARP ACTIVE</span></div>
+          <div class="text-slate-500 text-[10px]">CLICK & DRAG TO TOSS NODES</div>
+        </div>
+
+        <!-- Slider controls floating bottom right -->
+        <div class="absolute bottom-4 right-4 bg-black/60 backdrop-blur-md p-4 rounded-xl border border-white/10 space-y-3 w-64">
+          <div class="space-y-1">
+            <div class="flex justify-between text-[11px] font-mono">
+              <span class="text-slate-300">Gravity Vector:</span>
+              <span id="slider-val-gravity" class="text-cyan-400">-0.45g</span>
+            </div>
+            <input type="range" id="gravity-slider" min="-100" max="100" value="-45" oninput="updateGravitySlider(this.value)" class="w-full accent-cyan-400 cursor-pointer">
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between text-[11px] font-mono">
+              <span class="text-slate-300">Particle Friction:</span>
+              <span id="slider-val-friction" class="text-purple-400">0.98</span>
+            </div>
+            <input type="range" id="friction-slider" min="90" max="100" value="98" oninput="updateFrictionSlider(this.value)" class="w-full accent-purple-400 cursor-pointer">
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: CAPABILITIES MATRIX                 -->
+    <!-- ========================================== -->
+    <section id="view-capabilities" class="hidden space-y-6">
+      
+      <div class="text-center max-w-2xl mx-auto space-y-2 py-4">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-[var(--foreground,#f0f4fc)]">
+          Antigravity Core Feature Matrix
+        </h2>
+        <p class="text-sm text-[var(--muted-foreground,#94a3b8)]">
+          Every tool, subagent protocol, and execution sandbox designed for elite autonomous software engineering.
+        </p>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- Card 1: Autonomous Subagents -->
+        <div class="group bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-cyan-500/50 p-6 rounded-2xl transition duration-300 shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center group-hover:scale-110 transition">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-[var(--foreground,#f0f4fc)]">Concurrent Subagent Swarm</h3>
+              <p class="text-xs text-[var(--muted-foreground,#94a3b8)] mt-1.5 leading-relaxed">
+                Antigravity can launch background subagents (`research`, `self`, `teamwork`, or custom agents created dynamically via `define_subagent`) to parallelize massive refactors, deep codebase reviews, and documentation audits.
+              </p>
+            </div>
+            <div class="p-3 bg-[var(--background,#0b0f17)] rounded-xl border border-[var(--border,#262f3f)] text-xs font-mono text-cyan-300">
+              <code>invoke_subagent([ { Role: "Architect" }, { Role: "Auditor" } ])</code>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[var(--border,#262f3f)] flex items-center justify-between text-xs text-slate-400">
+            <span>Isolation</span>
+            <span class="text-cyan-400 font-mono">Shared or Branch</span>
+          </div>
+        </div>
+
+        <!-- Card 2: True Linux VM Sandbox -->
+        <div class="group bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-purple-500/50 p-6 rounded-2xl transition duration-300 shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center group-hover:scale-110 transition">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-[var(--foreground,#f0f4fc)]">Dedicated Debian Linux VM</h3>
+              <p class="text-xs text-[var(--muted-foreground,#94a3b8)] mt-1.5 leading-relaxed">
+                Direct bash shell execution under Debian 12 with preinstalled Node.js 24 LTS, `uv`, Python, git, GitHub CLI (`gh`), and Google Workspace CLIs. Safe non-root user space with zero mock terminal emulation.
+              </p>
+            </div>
+            <div class="p-3 bg-[var(--background,#0b0f17)] rounded-xl border border-[var(--border,#262f3f)] text-xs font-mono text-purple-300">
+              <code>run_command(CommandLine="uv run pytest")</code>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[var(--border,#262f3f)] flex items-center justify-between text-xs text-slate-400">
+            <span>Environment</span>
+            <span class="text-purple-400 font-mono">Debian 12 x86_64</span>
+          </div>
+        </div>
+
+        <!-- Card 3: Reactive Wakeup & Daemon Management -->
+        <div class="group bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-emerald-500/50 p-6 rounded-2xl transition duration-300 shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-[var(--foreground,#f0f4fc)]">Zero-Polling Reactive Wakeup</h3>
+              <p class="text-xs text-[var(--muted-foreground,#94a3b8)] mt-1.5 leading-relaxed">
+                No CPU-burning loops or sleep hacks. When background tasks or subagents finish, the event-driven host awakens Antigravity immediately with high-priority system messages.
+              </p>
+            </div>
+            <div class="p-3 bg-[var(--background,#0b0f17)] rounded-xl border border-[var(--border,#262f3f)] text-xs font-mono text-emerald-300">
+              <code>IsDaemon: true & reactive notifications</code>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[var(--border,#262f3f)] flex items-center justify-between text-xs text-slate-400">
+            <span>CPU Efficiency</span>
+            <span class="text-emerald-400 font-mono">100% Event-Driven</span>
+          </div>
+        </div>
+
+        <!-- Card 4: Generative UI & Artifact System -->
+        <div class="group bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-amber-500/50 p-6 rounded-2xl transition duration-300 shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center group-hover:scale-110 transition">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-[var(--foreground,#f0f4fc)]">Generative UI & Live Artifacts</h3>
+              <p class="text-xs text-[var(--muted-foreground,#94a3b8)] mt-1.5 leading-relaxed">
+                Antigravity crafts rich interactive widgets embedded directly inside chat using `<agent-embed>` or standalone full-screen HTML dashboards, complete with native theme tokens and zero CDN friction.
+              </p>
+            </div>
+            <div class="p-3 bg-[var(--background,#0b0f17)] rounded-xl border border-[var(--border,#262f3f)] text-xs font-mono text-amber-300">
+              <code>&lt;agent-embed src="file://.../widget.html"&gt;</code>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[var(--border,#262f3f)] flex items-center justify-between text-xs text-slate-400">
+            <span>Rendering</span>
+            <span class="text-amber-400 font-mono">Tailwind CSS + Web API</span>
+          </div>
+        </div>
+
+        <!-- Card 5: Slash Commands -->
+        <div class="group bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-indigo-500/50 p-6 rounded-2xl transition duration-300 shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center group-hover:scale-110 transition">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-[var(--foreground,#f0f4fc)]">First-Class Slash Workflows</h3>
+              <p class="text-xs text-[var(--muted-foreground,#94a3b8)] mt-1.5 leading-relaxed">
+                High-level operational modes: `/goal` for overnight continuous tasks, `/plan` for structured multi-stage blueprints, `/grill-me` for design alignment interviews, and `/teamwork` for autonomous multi-agent squads.
+              </p>
+            </div>
+            <div class="p-3 bg-[var(--background,#0b0f17)] rounded-xl border border-[var(--border,#262f3f)] text-xs font-mono text-indigo-300">
+              <code>/goal, /plan, /grill-me, /teamwork</code>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[var(--border,#262f3f)] flex items-center justify-between text-xs text-slate-400">
+            <span>Control Mode</span>
+            <span class="text-indigo-400 font-mono">Declarative</span>
+          </div>
+        </div>
+
+        <!-- Card 6: Google Workspace & GitHub Proxies -->
+        <div class="group bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-blue-500/50 p-6 rounded-2xl transition duration-300 shadow-sm flex flex-col justify-between">
+          <div class="space-y-4">
+            <div class="w-12 h-12 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 flex items-center justify-center group-hover:scale-110 transition">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-[var(--foreground,#f0f4fc)]">Zero-Credential Plugin Proxy</h3>
+              <p class="text-xs text-[var(--muted-foreground,#94a3b8)] mt-1.5 leading-relaxed">
+                Seamless OAuth integration with Google Docs, Sheets, Slides, Drive, Calendar, and GitHub through the sandboxed `agy-plugin-proxy`—no manual API token juggling required.
+              </p>
+            </div>
+            <div class="p-3 bg-[var(--background,#0b0f17)] rounded-xl border border-[var(--border,#262f3f)] text-xs font-mono text-blue-300">
+              <code>HTTP_PROXY localhost & agy-plugin-proxy</code>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-[var(--border,#262f3f)] flex items-center justify-between text-xs text-slate-400">
+            <span>Security</span>
+            <span class="text-blue-400 font-mono">Encrypted Proxy Token</span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: SANDBOX TERMINAL EMULATOR           -->
+    <!-- ========================================== -->
+    <section id="view-terminal" class="hidden space-y-6">
+      
+      <div class="bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] rounded-2xl overflow-hidden shadow-2xl">
+        <!-- Terminal Header -->
+        <div class="bg-[var(--background,#0b0f17)] border-b border-[var(--border,#262f3f)] px-4 py-3 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <div class="flex space-x-1.5">
+              <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+              <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+            </div>
+            <span class="text-xs font-mono text-[var(--muted-foreground,#94a3b8)] ml-2">antigravity@debian12-vm:~</span>
+          </div>
+          <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+            <span>SHELL: bash 5.2</span>
+            <span>•</span>
+            <span class="text-cyan-400">CWD: /home/antigravity</span>
+          </div>
+        </div>
+
+        <!-- Terminal Output Body -->
+        <div id="term-body" class="p-5 font-mono text-xs text-slate-200 h-96 overflow-y-auto space-y-2 bg-[#05070c]">
+          <div class="text-slate-400">Linux debian12-vm 6.1.0-21-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.1.90-1 x86_64</div>
+          <div class="text-slate-400">Antigravity Agentic Environment initialized. Type <span class="text-cyan-400">help</span> for command list.</div>
+          <div class="pt-2 text-cyan-300">$ echo "Welcome to Antigravity VM sandbox"</div>
+          <div class="text-slate-300">Welcome to Antigravity VM sandbox</div>
+        </div>
+
+        <!-- Terminal Input Line -->
+        <div class="bg-[var(--background,#0b0f17)] border-t border-[var(--border,#262f3f)] px-4 py-3 flex items-center gap-3">
+          <span class="text-cyan-400 font-mono text-xs font-bold">antigravity@deb12:~$</span>
+          <input type="text" id="term-input" onkeydown="handleTermKey(event)" placeholder="Try: skills, subagents, run-tests, /goal, zero-g, clear" class="flex-1 bg-transparent text-xs font-mono text-white focus:outline-none placeholder-slate-600">
+          <button onclick="runTermCmd()" class="px-3 py-1 rounded bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 text-xs font-mono hover:bg-cyan-600/50 transition">
+            EXECUTE
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Command Chips -->
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <span class="text-[var(--muted-foreground,#94a3b8)]">Quick commands:</span>
+        <button onclick="executeTermCommand('skills')" class="px-2.5 py-1 rounded-lg bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-cyan-400 font-mono text-cyan-300 transition">skills</button>
+        <button onclick="executeTermCommand('subagents')" class="px-2.5 py-1 rounded-lg bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-cyan-400 font-mono text-cyan-300 transition">subagents</button>
+        <button onclick="executeTermCommand('git-status')" class="px-2.5 py-1 rounded-lg bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-cyan-400 font-mono text-cyan-300 transition">git-status</button>
+        <button onclick="executeTermCommand('run-tests')" class="px-2.5 py-1 rounded-lg bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-cyan-400 font-mono text-cyan-300 transition">run-tests</button>
+        <button onclick="executeTermCommand('/goal optimize-db')" class="px-2.5 py-1 rounded-lg bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-cyan-400 font-mono text-cyan-300 transition">/goal optimize-db</button>
+        <button onclick="executeTermCommand('zero-g')" class="px-2.5 py-1 rounded-lg bg-[var(--card,#151b28)] border border-[var(--border,#262f3f)] hover:border-cyan-400 font-mono text-cyan-300 transition">zero-g</button>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC & SIMULATION SYSTEM -->
+  <script>
+    // Audio synthesizer using Web Audio API (zero external files required!)
+    let audioCtx = null;
+    let audioEnabled = true;
+
+    function playBeep(freq = 600, duration = 0.08, type = 'sine') {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        // audio might be blocked by autoplay policies until gesture
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('sound-btn');
+      if (audioEnabled) {
+        btn.classList.add('text-cyan-400');
+        playBeep(880, 0.1);
+      } else {
+        btn.classList.remove('text-cyan-400');
+      }
+    }
+
+    // TAB SWITCHING
+    function switchTab(tabId) {
+      playBeep(440, 0.05);
+      const tabs = ['orchestrator', 'physics', 'capabilities', 'terminal'];
+      tabs.forEach(t => {
+        const view = document.getElementById('view-' + t);
+        const btn = document.getElementById('tab-btn-' + t);
+        if (t === tabId) {
+          view.classList.remove('hidden');
+          btn.classList.add('bg-[var(--primary,#6366f1)]', 'text-white', 'shadow');
+          btn.classList.remove('text-[var(--muted-foreground,#94a3b8)]');
+        } else {
+          view.classList.add('hidden');
+          btn.classList.remove('bg-[var(--primary,#6366f1)]', 'text-white', 'shadow');
+          btn.classList.add('text-[var(--muted-foreground,#94a3b8)]');
+        }
+      });
+
+      if (tabId === 'physics') {
+        initPhysics();
+      }
+    }
+
+    // SIMULATION PIPELINE ENGINE
+    let simTimer = null;
+    let currentStep = 0;
+    let simSpeed = 1;
+
+    function setSpeed(spd) {
+      simSpeed = spd;
+      document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('bg-cyan-500/20', 'text-cyan-300'));
+      event.target.classList.add('bg-cyan-500/20', 'text-cyan-300');
+      playBeep(520, 0.04);
+    }
+
+    function logConsole(text, color = 'text-slate-300') {
+      const consoleBox = document.getElementById('sim-console');
+      const time = new Date().toISOString().substring(11, 19);
+      const line = document.createElement('div');
+      line.className = color;
+      line.innerHTML = `<span class="text-slate-500">[${time}]</span> ${text}`;
+      consoleBox.appendChild(line);
+      consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+
+    function resetSimulation() {
+      if (simTimer) clearTimeout(simTimer);
+      currentStep = 0;
+      for (let i = 1; i <= 5; i++) {
+        const node = document.getElementById(`node-step-${i}`);
+        node.classList.remove('border-cyan-400', 'bg-cyan-950/20', 'shadow-lg');
+        node.classList.add('border-[var(--border,#262f3f)]', 'bg-[var(--background,#0b0f17)]');
+        node.querySelector('.node-badge').textContent = 'IDLE';
+        node.querySelector('.node-badge').className = 'node-badge text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono';
+        node.querySelector('.node-detail').classList.add('hidden');
+      }
+      document.getElementById('metric-subagents').textContent = '0';
+      document.getElementById('metric-tasks').textContent = '0';
+      document.getElementById('pipeline-status-text').textContent = 'Simulation reset. Ready.';
+      playBeep(330, 0.08);
+    }
+
+    const scenarios = {
+      refactor: {
+        title: "Async Auth & Microservice Refactor",
+        steps: [
+          { log: "Parsing user request: 'Refactor auth JWT token validation to async with refresh cycle'", color: "text-cyan-400", subagents: 0, tasks: 0 },
+          { log: "<thought> Target files: src/auth/jwt.py, src/auth/middleware.py. Planning 3-tier regression tests.", color: "text-purple-400", subagents: 0, tasks: 1 },
+          { log: "Spawning subagent [research] to scan dependency usages across 24 microservice routes...", color: "text-blue-400", subagents: 1, tasks: 1 },
+          { log: "Executing run_command('uv run pytest tests/auth/ -v'). Applying surgical diff via replace_file_content.", color: "text-amber-400", subagents: 1, tasks: 2 },
+          { log: "All 38 test suites passed! Emitted summary artifact and interactive auth flow diagram.", color: "text-emerald-400", subagents: 0, tasks: 0 }
+        ]
+      },
+      teamwork: {
+        title: "Multi-Agent Swarm (/teamwork)",
+        steps: [
+          { log: "Command triggered: /teamwork 'Build distributed real-time cache with raft consensus'", color: "text-cyan-400", subagents: 0, tasks: 0 },
+          { log: "<thought> Initializing user_liaison role. Registering background cron progress monitor.", color: "text-purple-400", subagents: 0, tasks: 1 },
+          { log: "Spawning Agent 1 (Consensus Architect) & Agent 2 (Network Socket Engineer) in parallel...", color: "text-blue-400", subagents: 2, tasks: 2 },
+          { log: "VM Task Bus: Compiling Go raft module with run_command('go build -race ./...'). Zero race conditions detected.", color: "text-amber-400", subagents: 2, tasks: 3 },
+          { log: "Multi-agent swarm completed milestone 1. Delivering live interactive telemetry dashboard artifact.", color: "text-emerald-400", subagents: 0, tasks: 0 }
+        ]
+      },
+      genui: {
+        title: "Generative UI & Sandbox Artifact",
+        steps: [
+          { log: "User Request: 'Build an interactive dashboard showing cluster health metrics'", color: "text-cyan-400", subagents: 0, tasks: 0 },
+          { log: "<thought> Looking up skill 'generative_ui'. Ensuring Tailwind script from gstatic is utilized.", color: "text-purple-400", subagents: 0, tasks: 1 },
+          { log: "Synthesizing dynamic theme tokens: --card, --border, --foreground. Crafting responsive widget.", color: "text-blue-400", subagents: 0, tasks: 1 },
+          { log: "Writing artifact to ~/.gemini/jetski/brain/.../cluster_dashboard.html with UserFacing: true.", color: "text-amber-400", subagents: 0, tasks: 1 },
+          { log: "Embedded widget via <agent-embed> inline in chat! Zero CSP friction, full responsiveness.", color: "text-emerald-400", subagents: 0, tasks: 0 }
+        ]
+      },
+      debugger: {
+        title: "Linux Core Dump & CI Debugger",
+        steps: [
+          { log: "User Request: 'CI pipeline failed on worker-7 with segmentation fault (core dumped)'", color: "text-cyan-400", subagents: 0, tasks: 0 },
+          { log: "<thought> Fetching GitHub Actions run log using 'gh run view --log-failed'. Inspecting backtrace.", color: "text-purple-400", subagents: 0, tasks: 1 },
+          { log: "Spawning subagent [self] to reproduce crash inside sandboxed Debian 12 container...", color: "text-blue-400", subagents: 1, tasks: 1 },
+          { log: "Found off-by-one buffer read in buffer_pool.c#L142. Surgical patch applied and verified with gdb.", color: "text-amber-400", subagents: 1, tasks: 1 },
+          { log: "PR drafted via gh pr create. Commit signed and pushed through agy-plugin-proxy.", color: "text-emerald-400", subagents: 0, tasks: 0 }
+        ]
+      }
+    };
+
+    function startSimulation(scenarioKey) {
+      resetSimulation();
+      playBeep(600, 0.1);
+      const scn = scenarios[scenarioKey] || scenarios['refactor'];
+      logConsole(`>>> Starting simulated pipeline: ${scn.title}`, 'text-cyan-300 font-bold');
+      document.getElementById('pipeline-status-text').textContent = `Running: ${scn.title}...`;
+
+      function advanceStep() {
+        if (currentStep >= scn.steps.length) {
+          logConsole(`[DONE] Simulation finished successfully.`, 'text-emerald-300 font-bold');
+          document.getElementById('pipeline-status-text').textContent = `Pipeline complete.`;
+          playBeep(880, 0.2, 'triangle');
+          return;
+        }
+
+        const stepIdx = currentStep + 1;
+        const node = document.getElementById(`node-step-${stepIdx}`);
+        const data = scn.steps[currentStep];
+
+        // Highlight node
+        node.classList.remove('border-[var(--border,#262f3f)]', 'bg-[var(--background,#0b0f17)]');
+        node.classList.add('border-cyan-400', 'bg-cyan-950/20', 'shadow-lg');
+        
+        const badge = node.querySelector('.node-badge');
+        badge.textContent = 'RUNNING';
+        badge.className = 'node-badge text-[11px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-mono animate-pulse';
+        
+        node.querySelector('.node-detail').classList.remove('hidden');
+
+        // Log and update metrics
+        logConsole(data.log, data.color);
+        document.getElementById('metric-subagents').textContent = data.subagents;
+        document.getElementById('metric-tasks').textContent = data.tasks;
+        playBeep(400 + (stepIdx * 100), 0.08);
+
+        setTimeout(() => {
+          badge.textContent = 'RESOLVED';
+          badge.className = 'node-badge text-[11px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono';
+        }, 1200 / simSpeed);
+
+        currentStep++;
+        simTimer = setTimeout(advanceStep, 1800 / simSpeed);
+      }
+
+      advanceStep();
+    }
+
+    function loadPresetScenario(val) {
+      startSimulation(val);
+    }
+
+    // ==========================================
+    // ZERO-G CANVAS PHYSICS ENGINE
+    // ==========================================
+    let canvas, ctx;
+    let animId = null;
+    let gravityY = -0.45;
+    let friction = 0.985;
+    let vortexActive = false;
+
+    const featureNodes = [
+      { name: "Subagents", type: "agent", color: "#38bdf8", radius: 36, x: 140, y: 320, vx: 1.2, vy: -2 },
+      { name: "Debian VM", type: "vm", color: "#c084fc", radius: 42, x: 300, y: 280, vx: -1.5, vy: -1.8 },
+      { name: "Generative UI", type: "ui", color: "#fbbf24", radius: 38, x: 480, y: 350, vx: 0.8, vy: -2.4 },
+      { name: "DeepMind Brain", type: "core", color: "#6366f1", radius: 48, x: 320, y: 160, vx: -0.5, vy: -1.2 },
+      { name: "Reactive Wakeup", type: "sys", color: "#34d399", radius: 34, x: 650, y: 260, vx: -1.2, vy: -1.5 },
+      { name: "Slash /goal", type: "flow", color: "#f43f5e", radius: 32, x: 200, y: 120, vx: 1.1, vy: 0.8 },
+      { name: "Skills Engine", type: "skill", color: "#38bdf8", radius: 35, x: 740, y: 180, vx: -0.9, vy: -1.1 }
+    ];
+
+    let particles = [];
+    const PARTICLE_COUNT = 70;
+
+    function initPhysics() {
+      canvas = document.getElementById('physics-canvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+
+      // Adjust for device pixel ratio
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+      // Initialize background dust particles
+      particles = [];
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+          x: Math.random() * rect.width,
+          y: Math.random() * rect.height,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: (Math.random() - 0.5) * 0.8,
+          radius: Math.random() * 2 + 1,
+          color: Math.random() > 0.5 ? 'rgba(56, 189, 248, 0.4)' : 'rgba(192, 132, 252, 0.4)'
+        });
+      }
+
+      setupCanvasInteractions();
+
+      if (animId) cancelAnimationFrame(animId);
+      renderPhysics();
+    }
+
+    let draggedNode = null;
+    let mousePos = { x: 0, y: 0 };
+
+    function setupCanvasInteractions() {
+      canvas.onmousedown = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        mousePos.x = e.clientX - rect.left;
+        mousePos.y = e.clientY - rect.top;
+
+        for (let node of featureNodes) {
+          const dx = node.x - mousePos.x;
+          const dy = node.y - mousePos.y;
+          if (Math.hypot(dx, dy) < node.radius) {
+            draggedNode = node;
+            playBeep(580, 0.05);
+            break;
+          }
+        }
+      };
+
+      window.onmousemove = (e) => {
+        if (!canvas) return;
+        const rect = canvas.getBoundingClientRect();
+        mousePos.x = e.clientX - rect.left;
+        mousePos.y = e.clientY - rect.top;
+
+        if (draggedNode) {
+          draggedNode.vx = (mousePos.x - draggedNode.x) * 0.3;
+          draggedNode.vy = (mousePos.y - draggedNode.y) * 0.3;
+          draggedNode.x = mousePos.x;
+          draggedNode.y = mousePos.y;
+        }
+      };
+
+      window.onmouseup = () => {
+        if (draggedNode) {
+          playBeep(420, 0.06);
+          draggedNode = null;
+        }
+      };
+    }
+
+    function renderPhysics() {
+      if (!canvas || !ctx) return;
+      const rect = canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Render quantum connection webs between nearby nodes
+      for (let i = 0; i < featureNodes.length; i++) {
+        for (let j = i + 1; j < featureNodes.length; j++) {
+          const n1 = featureNodes[i];
+          const n2 = featureNodes[j];
+          const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+          if (dist < 220) {
+            const alpha = (1 - dist / 220) * 0.3;
+            ctx.beginPath();
+            ctx.moveTo(n1.x, n1.y);
+            ctx.lineTo(n2.x, n2.y);
+            ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Update & render dust particles
+      for (let p of particles) {
+        p.x += p.vx;
+        p.y += p.vy + (gravityY * 0.5);
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.fill();
+      }
+
+      // Update & render feature nodes
+      const centerX = width / 2;
+      const centerY = height / 2;
+
+      for (let node of featureNodes) {
+        if (node !== draggedNode) {
+          // Gravity & forces
+          if (vortexActive) {
+            const dx = centerX - node.x;
+            const dy = centerY - node.y;
+            const angle = Math.atan2(dy, dx);
+            node.vx += Math.cos(angle + Math.PI / 2) * 0.8 + dx * 0.002;
+            node.vy += Math.sin(angle + Math.PI / 2) * 0.8 + dy * 0.002;
+          } else {
+            node.vy += gravityY * 0.4;
+          }
+
+          node.vx *= friction;
+          node.vy *= friction;
+          node.x += node.vx;
+          node.y += node.vy;
+
+          // Wall bounces
+          if (node.x - node.radius < 0) {
+            node.x = node.radius;
+            node.vx *= -0.75;
+          } else if (node.x + node.radius > width) {
+            node.x = width - node.radius;
+            node.vx *= -0.75;
+          }
+
+          if (node.y - node.radius < 0) {
+            node.y = node.radius;
+            node.vy *= -0.75;
+          } else if (node.y + node.radius > height) {
+            node.y = height - node.radius;
+            node.vy *= -0.75;
+          }
+        }
+
+        // Draw node glow
+        const glowGrad = ctx.createRadialGradient(node.x, node.y, node.radius * 0.3, node.x, node.y, node.radius * 1.6);
+        glowGrad.addColorStop(0, node.color + '44');
+        glowGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = glowGrad;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius * 1.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Draw node body
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#0f172a';
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = node.color;
+        ctx.stroke();
+
+        // Draw text label
+        ctx.fillStyle = '#f8fafc';
+        ctx.font = 'bold 11px system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(node.name, node.x, node.y);
+      }
+
+      animId = requestAnimationFrame(renderPhysics);
+    }
+
+    function setGravityMode(mode) {
+      playBeep(650, 0.08);
+      vortexActive = false;
+      const hudGrav = document.getElementById('hud-gravity');
+      const slider = document.getElementById('gravity-slider');
+
+      if (mode === 'antigravity') {
+        gravityY = -0.6;
+        slider.value = -60;
+        hudGrav.textContent = "-0.60 G (LEVITATION)";
+        document.getElementById('slider-val-gravity').textContent = "-0.60g";
+      } else if (mode === 'zerog') {
+        gravityY = 0.0;
+        slider.value = 0;
+        hudGrav.textContent = "0.00 G (ZERO-G)";
+        document.getElementById('slider-val-gravity').textContent = "0.00g";
+      } else if (mode === 'vortex') {
+        vortexActive = true;
+        hudGrav.textContent = "VORTEX WARP";
+      }
+    }
+
+    function triggerShockwave() {
+      playBeep(220, 0.25, 'sawtooth');
+      const rect = canvas.getBoundingClientRect();
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+
+      for (let node of featureNodes) {
+        const dx = node.x - cx;
+        const dy = node.y - cy;
+        const dist = Math.hypot(dx, dy) || 1;
+        const force = 16;
+        node.vx += (dx / dist) * force;
+        node.vy += (dy / dist) * force;
+      }
+    }
+
+    function updateGravitySlider(val) {
+      gravityY = parseFloat(val) / 100;
+      vortexActive = false;
+      document.getElementById('slider-val-gravity').textContent = `${gravityY.toFixed(2)}g`;
+      document.getElementById('hud-gravity').textContent = `${gravityY.toFixed(2)} G`;
+    }
+
+    function updateFrictionSlider(val) {
+      friction = parseFloat(val) / 100;
+      document.getElementById('slider-val-friction').textContent = friction.toFixed(2);
+    }
+
+    // ==========================================
+    // SANDBOX TERMINAL EMULATOR
+    // ==========================================
+    function handleTermKey(e) {
+      if (e.key === 'Enter') {
+        runTermCmd();
+      }
+    }
+
+    function runTermCmd() {
+      const input = document.getElementById('term-input');
+      const cmd = input.value.trim();
+      if (!cmd) return;
+      executeTermCommand(cmd);
+      input.value = '';
+    }
+
+    function executeTermCommand(cmd) {
+      playBeep(520, 0.04);
+      const term = document.getElementById('term-body');
+      
+      const promptLine = document.createElement('div');
+      promptLine.className = 'text-cyan-300 pt-2 font-bold';
+      promptLine.textContent = `$ ${cmd}`;
+      term.appendChild(promptLine);
+
+      const resLine = document.createElement('div');
+      resLine.className = 'text-slate-300 leading-relaxed';
+
+      switch (cmd.toLowerCase().trim()) {
+        case 'help':
+          resLine.innerHTML = `Available Antigravity commands:<br>
+          • <span class="text-cyan-400">skills</span> - List loaded capabilities & tool bindings<br>
+          • <span class="text-cyan-400">subagents</span> - View active subagents and task roles<br>
+          • <span class="text-cyan-400">git-status</span> - Check current git repository & branch<br>
+          • <span class="text-cyan-400">run-tests</span> - Trigger mock pytest test suite in sandbox<br>
+          • <span class="text-cyan-400">/goal [task]</span> - Simulate autonomous long-running goal mode<br>
+          • <span class="text-cyan-400">zero-g</span> - Switch to Zero-G physics visualizer<br>
+          • <span class="text-cyan-400">clear</span> - Clear terminal screen`;
+          break;
+        case 'skills':
+          resLine.innerHTML = `<span class="text-emerald-400">Installed Antigravity Skills:</span><br>
+          - <span class="text-cyan-300">generative_ui</span>: Interactive HTML widgets and Tailwind artifacts<br>
+          - <span class="text-cyan-300">github</span>: Pull request, issues, actions, and git automation<br>
+          - <span class="text-cyan-300">gcalendar, gdocs, gdrive, gsheets, gslides</span>: Google Workspace integrations<br>
+          - <span class="text-cyan-300">web-app-development</span>: Scaffolding, styling, and modern React/HTML apps`;
+          break;
+        case 'subagents':
+          resLine.innerHTML = `<span class="text-purple-400">Subagent Pool Status:</span><br>
+          - research (read-only code survey)<br>
+          - self (mirrored agent instance)<br>
+          - teamwork (sentinel coordinator)<br>
+          - dynamic: define_subagent available for custom multi-agent tasks`;
+          break;
+        case 'git-status':
+          resLine.innerHTML = `On branch main<br>
+          Your branch is up to date with 'origin/main'.<br>
+          Connected repo: <span class="text-cyan-400">antigravity/core-engine</span><br>
+          Proxy: agy-plugin-proxy (OAuth injected on push)`;
+          break;
+        case 'run-tests':
+          resLine.innerHTML = `<span class="text-amber-400">==> Running uv run pytest tests/ ...</span><br>
+          tests/test_agent_runtime.py::test_reactive_wakeup <span class="text-emerald-400">PASSED</span><br>
+          tests/test_subagents.py::test_subagent_dispatch <span class="text-emerald-400">PASSED</span><br>
+          tests/test_tools.py::test_sandboxed_vm_safety <span class="text-emerald-400">PASSED</span><br>
+          <span class="text-emerald-300 font-bold">====== 3 passed in 0.42s ======</span>`;
+          break;
+        case 'zero-g':
+          switchTab('physics');
+          return;
+        case 'clear':
+          term.innerHTML = '';
+          return;
+        default:
+          if (cmd.startsWith('/goal')) {
+            resLine.innerHTML = `<span class="text-cyan-400">/goal accepted:</span> Orchestrating long-running autonomous loop for "${cmd.substring(5).trim()}". Periodic checkpointing enabled.`;
+          } else {
+            resLine.innerHTML = `<span class="text-rose-400">Command not found:</span> ${cmd}. Type <span class="text-cyan-300">help</span> for available commands.`;
+          }
+      }
+
+      term.appendChild(resLine);
+      term.scrollTop = term.scrollHeight;
+    }
+
+    // Auto-initialize
+    window.addEventListener('resize', () => {
+      if (!document.getElementById('view-physics').classList.contains('hidden')) {
+        initPhysics();
+      }
+    });
+  </script>
+</body>
+</html>

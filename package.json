@@ -1,0 +1,19 @@
+{
+  "name": "antigravity-feature-showcase",
+  "version": "1.0.0",
+  "description": "Interactive Antigravity feature showcase and Zero-G physics lab",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "antigravity",
+    "agentic-ai",
+    "deepmind",
+    "zero-g",
+    "physics-simulation",
+    "generative-ui"
+  ],
+  "author": "aneesq635",
+  "license": "MIT"
+}

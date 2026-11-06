@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+</head>
+<body class="bg-transparent text-[var(--foreground,#f0f4fc)] antialiased p-2">
+
+  <div class="bg-[var(--card,#151b28)] text-[var(--foreground,#f0f4fc)] border border-[var(--border,#262f3f)] rounded-2xl p-4 shadow-lg space-y-3.5">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between pb-3 border-b border-[var(--border,#262f3f)]">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 via-purple-500 to-cyan-400 p-0.5 shadow-md flex items-center justify-center">
+          <div class="w-full h-full bg-[var(--background,#0b0f17)] rounded-[7px] flex items-center justify-center">
+            <svg class="w-4 h-4 text-cyan-400 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-sm tracking-wide bg-gradient-to-r from-cyan-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">ANTIGRAVITY</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 font-mono">AGENTIC CORE</span>
+          </div>
+          <p class="text-[11px] text-[var(--muted-foreground,#94a3b8)]">Google DeepMind Autonomous Coding Assistant</p>
+        </div>
+      </div>
+
+      <!-- Mode pills -->
+      <div class="flex items-center gap-1.5 bg-[var(--background,#0b0f17)] p-1 rounded-lg border border-[var(--border,#262f3f)]">
+        <button onclick="setInlineMode('pulse')" id="btn-mode-pulse" class="px-2.5 py-1 text-xs rounded-md font-medium transition bg-indigo-600 text-white shadow">Engine</button>
+        <button onclick="setInlineMode('zerog')" id="btn-mode-zerog" class="px-2.5 py-1 text-xs rounded-md font-medium transition text-[var(--muted-foreground,#94a3b8)] hover:text-white">Zero-G</button>
+        <button onclick="setInlineMode('matrix')" id="btn-mode-matrix" class="px-2.5 py-1 text-xs rounded-md font-medium transition text-[var(--muted-foreground,#94a3b8)] hover:text-white">Specs</button>
+      </div>
+    </div>
+
+    <!-- VIEW 1: COGNITIVE LOOP STEPPER -->
+    <div id="inline-view-pulse" class="space-y-3">
+      <!-- Visual interactive steps -->
+      <div class="grid grid-cols-4 gap-2">
+        <button onclick="inspectStep(0)" id="step-btn-0" class="step-card p-2 rounded-xl border border-cyan-500/40 bg-cyan-500/10 text-left transition hover:scale-102">
+          <div class="text-[10px] font-mono text-cyan-400 font-bold">01 INTENT</div>
+          <div class="text-xs font-semibold truncate text-[var(--foreground,#f0f4fc)] mt-0.5">Parse & Plan</div>
+        </button>
+        <button onclick="inspectStep(1)" id="step-btn-1" class="step-card p-2 rounded-xl border border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)] text-left transition hover:scale-102">
+          <div class="text-[10px] font-mono text-purple-400 font-bold">02 SWARM</div>
+          <div class="text-xs font-semibold truncate text-[var(--foreground,#f0f4fc)] mt-0.5">Subagents</div>
+        </button>
+        <button onclick="inspectStep(2)" id="step-btn-2" class="step-card p-2 rounded-xl border border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)] text-left transition hover:scale-102">
+          <div class="text-[10px] font-mono text-amber-400 font-bold">03 VM OS</div>
+          <div class="text-xs font-semibold truncate text-[var(--foreground,#f0f4fc)] mt-0.5">Bash & uv</div>
+        </button>
+        <button onclick="inspectStep(3)" id="step-btn-3" class="step-card p-2 rounded-xl border border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)] text-left transition hover:scale-102">
+          <div class="text-[10px] font-mono text-emerald-400 font-bold">04 GEN UI</div>
+          <div class="text-xs font-semibold truncate text-[var(--foreground,#f0f4fc)] mt-0.5">Artifacts</div>
+        </button>
+      </div>
+
+      <!-- Detail Box -->
+      <div id="step-detail-box" class="p-3 rounded-xl bg-[var(--background,#0b0f17)] border border-[var(--border,#262f3f)] text-xs space-y-1">
+        <div class="flex items-center justify-between">
+          <span id="detail-title" class="font-bold text-cyan-400">Step 1: Cognitive Planning & Skill Resolution</span>
+          <span class="text-[10px] font-mono text-slate-500">REACTIVE WAKEUP</span>
+        </div>
+        <p id="detail-desc" class="text-slate-300 leading-relaxed text-[11px]">
+          Antigravity analyzes complex prompts, identifies required skills (generative_ui, github, gworkspace), reviews repository structure, and builds hierarchical execution DAGs without hallucinating.
+        </p>
+      </div>
+    </div>
+
+    <!-- VIEW 2: MINI ZERO-G INTERACTIVE CANVAS -->
+    <div id="inline-view-zerog" class="hidden space-y-2">
+      <div class="relative w-full h-36 rounded-xl border border-[var(--border,#262f3f)] overflow-hidden bg-[#070a10]">
+        <canvas id="mini-canvas" class="w-full h-full block cursor-pointer"></canvas>
+        <div class="absolute top-2 left-2 pointer-events-none text-[10px] font-mono text-cyan-400 bg-black/50 px-2 py-0.5 rounded">
+          CLICK / TAP TO INVERT GRAVITY
+        </div>
+        <div id="mini-status" class="absolute bottom-2 right-2 pointer-events-none text-[10px] font-mono text-purple-300 bg-black/50 px-2 py-0.5 rounded">
+          GRAVITY: -0.5 G (LEVITATING)
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: CORE SPECS & METRICS -->
+    <div id="inline-view-matrix" class="hidden grid grid-cols-2 gap-2 text-xs">
+      <div class="p-2.5 rounded-xl bg-[var(--background,#0b0f17)] border border-[var(--border,#262f3f)]">
+        <div class="text-[10px] text-cyan-400 font-mono font-bold">SUBAGENT ROLES</div>
+        <div class="text-[11px] text-slate-300 mt-1">research (read-only), teamwork (sentinel), self, bespoke</div>
+      </div>
+      <div class="p-2.5 rounded-xl bg-[var(--background,#0b0f17)] border border-[var(--border,#262f3f)]">
+        <div class="text-[10px] text-purple-400 font-mono font-bold">DEBIAN 12 SANDBOX</div>
+        <div class="text-[11px] text-slate-300 mt-1">Debian Linux, Node 24, uv, gh, python3 & plugin proxy</div>
+      </div>
+      <div class="p-2.5 rounded-xl bg-[var(--background,#0b0f17)] border border-[var(--border,#262f3f)]">
+        <div class="text-[10px] text-amber-400 font-mono font-bold">SLASH COMMANDS</div>
+        <div class="text-[11px] text-slate-300 mt-1">/goal (overnight), /plan, /grill-me (interview), /teamwork</div>
+      </div>
+      <div class="p-2.5 rounded-xl bg-[var(--background,#0b0f17)] border border-[var(--border,#262f3f)]">
+        <div class="text-[10px] text-emerald-400 font-mono font-bold">GENERATIVE UI</div>
+        <div class="text-[11px] text-slate-300 mt-1">Direct &lt;agent-embed&gt; & standalone responsive artifacts</div>
+      </div>
+    </div>
+
+    <!-- Footer Status -->
+    <div class="pt-1 flex items-center justify-between text-[11px] text-[var(--muted-foreground,#94a3b8)]">
+      <div class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Reactive Daemon Active</span>
+      </div>
+      <span class="font-mono text-[10px] text-cyan-400">Debian 12 • Bookworm x86_64</span>
+    </div>
+
+  </div>
+
+  <script>
+    const stepDetails = [
+      {
+        title: "Step 1: Cognitive Planning & Skill Resolution",
+        desc: "Antigravity decomposes user requests into actionable graphs, activates skills (e.g. generative_ui, web-app-development, github), and synthesizes chain-of-thought plans.",
+        color: "text-cyan-400",
+        border: "border-cyan-500/40",
+        bg: "bg-cyan-500/10"
+      },
+      {
+        title: "Step 2: Subagent Swarm Orchestration",
+        desc: "Dispatches concurrent background subagents (research, self, teamwork) with isolated roles, receiving asynchronous event-driven notifications upon task completion.",
+        color: "text-purple-400",
+        border: "border-purple-500/40",
+        bg: "bg-purple-500/10"
+      },
+      {
+        title: "Step 3: Sandboxed Linux VM Execution",
+        desc: "Executes non-root bash commands, tests via uv/pytest, builds via node/npm, and applies surgical file diffs without defeating sandboxes.",
+        color: "text-amber-400",
+        border: "border-amber-500/40",
+        bg: "bg-amber-500/10"
+      },
+      {
+        title: "Step 4: Generative UI & Rich Artifacts",
+        desc: "Delivers live interactive widgets embedded directly in conversation cards or standalone full-viewport dashboards with dark/light theme support.",
+        color: "text-emerald-400",
+        border: "border-emerald-500/40",
+        bg: "bg-emerald-500/10"
+      }
+    ];
+
+    function inspectStep(idx) {
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`step-btn-${i}`);
+        if (i === idx) {
+          btn.className = `step-card p-2 rounded-xl border ${stepDetails[i].border} ${stepDetails[i].bg} text-left transition`;
+        } else {
+          btn.className = 'step-card p-2 rounded-xl border border-[var(--border,#262f3f)] bg-[var(--background,#0b0f17)] text-left transition';
+        }
+      }
+      const data = stepDetails[idx];
+      const titleEl = document.getElementById('detail-title');
+      titleEl.textContent = data.title;
+      titleEl.className = `font-bold ${data.color}`;
+      document.getElementById('detail-desc').textContent = data.desc;
+    }
+
+    function setInlineMode(mode) {
+      ['pulse', 'zerog', 'matrix'].forEach(m => {
+        const view = document.getElementById('inline-view-' + m);
+        const btn = document.getElementById('btn-mode-' + m);
+        if (m === mode) {
+          view.classList.remove('hidden');
+          btn.className = 'px-2.5 py-1 text-xs rounded-md font-medium transition bg-indigo-600 text-white shadow';
+        } else {
+          view.classList.add('hidden');
+          btn.className = 'px-2.5 py-1 text-xs rounded-md font-medium transition text-[var(--muted-foreground,#94a3b8)] hover:text-white';
+        }
+      });
+
+      if (mode === 'zerog') {
+        initMiniPhysics();
+      }
+    }
+
+    // Mini Zero-G Canvas
+    let miniCanvas, miniCtx, miniAnim;
+    let miniGravity = -0.5;
+    const miniNodes = [
+      { name: "Subagents", color: "#38bdf8", r: 18, x: 50, y: 70, vx: 1, vy: -1.2 },
+      { name: "Linux VM", color: "#c084fc", r: 20, x: 120, y: 90, vx: -1.1, vy: -0.9 },
+      { name: "Gen UI", color: "#fbbf24", r: 18, x: 200, y: 60, vx: 0.8, vy: -1.4 },
+      { name: "DeepMind", color: "#6366f1", r: 22, x: 270, y: 80, vx: -0.9, vy: -0.7 },
+      { name: "Skills", color: "#34d399", r: 17, x: 330, y: 70, vx: 1.2, vy: -1.1 }
+    ];
+
+    function initMiniPhysics() {
+      miniCanvas = document.getElementById('mini-canvas');
+      if (!miniCanvas) return;
+      miniCtx = miniCanvas.getContext('2d');
+      const rect = miniCanvas.getBoundingClientRect();
+      miniCanvas.width = rect.width;
+      miniCanvas.height = rect.height;
+
+      miniCanvas.onclick = () => {
+        miniGravity = miniGravity < 0 ? 0.5 : -0.5;
+        document.getElementById('mini-status').textContent = `GRAVITY: ${miniGravity > 0 ? '+0.5 G (FALLING)' : '-0.5 G (LEVITATING)'}`;
+        miniNodes.forEach(n => { n.vy = (Math.random() - 0.5) * 4; n.vx = (Math.random() - 0.5) * 4; });
+      };
+
+      if (miniAnim) cancelAnimationFrame(miniAnim);
+      renderMiniPhysics();
+    }
+
+    function renderMiniPhysics() {
+      if (!miniCanvas || !miniCtx) return;
+      const w = miniCanvas.width;
+      const h = miniCanvas.height;
+      miniCtx.clearRect(0, 0, w, h);
+
+      miniNodes.forEach(n => {
+        n.vy += miniGravity * 0.2;
+        n.vx *= 0.99;
+        n.vy *= 0.99;
+        n.x += n.vx;
+        n.y += n.vy;
+
+        if (n.x - n.r < 0) { n.x = n.r; n.vx *= -0.8; }
+        if (n.x + n.r > w) { n.x = w - n.r; n.vx *= -0.8; }
+        if (n.y - n.r < 0) { n.y = n.r; n.vy *= -0.8; }
+        if (n.y + n.r > h) { n.y = h - n.r; n.vy *= -0.8; }
+
+        miniCtx.beginPath();
+        miniCtx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        miniCtx.fillStyle = '#0f172a';
+        miniCtx.fill();
+        miniCtx.lineWidth = 2;
+        miniCtx.strokeStyle = n.color;
+        miniCtx.stroke();
+
+        miniCtx.fillStyle = '#f8fafc';
+        miniCtx.font = 'bold 9px sans-serif';
+        miniCtx.textAlign = 'center';
+        miniCtx.textBaseline = 'middle';
+        miniCtx.fillText(n.name, n.x, n.y);
+      });
+
+      miniAnim = requestAnimationFrame(renderMiniPhysics);
+    }
+  </script>
+</body>
+</html>
